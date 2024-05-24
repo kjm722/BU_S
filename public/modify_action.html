@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예매 변경 및 취소 액션</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/action_style.css">
+    <script>
+        function handleFormSubmission(event) {
+            event.preventDefault();
+            var form = event.target;
+            var actionType = form.dataset.actionType;
+            var message = '';
+
+            if (actionType === 'change') {
+                message = '예매 정보가 변경 되었습니다.';
+            } else if (actionType === 'cancel') {
+                message = '예매가 취소되었습니다.';
+            }
+
+            document.getElementById('message').textContent = message;
+        }
+    </script>
+</head>
+<body style="background-color: #f2f2f2;">
+    <div class="main">
+        <div class="header">
+            <h1><a href="./index.html">
+                <img src="./logo.jpg" alt="백석대 로고">
+            </a></h1>
+            <div class="bar">
+                <ul>
+                    <li><a href="./timetable.html">노선 조회</a></li>
+                    <li><a href="./ticket.html">버스 예매</a></li>
+                    <li><a href="./modify.html">예매 내역</a></li>
+                    <li><a href="./login.html">로그인</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div class="container">
+        <h2>예매 변경 및 취소</h2>
+        <p>아래에서 예매 내역을 변경하거나 취소할 수 있습니다.</p>
+        <p id="message" style="color: green; font-weight: bold;"></p>
+        <form id="change-form" data-action-type="change" onsubmit="handleFormSubmission(event)">
+            <input type="hidden" id="reservation-number" name="reservation-number" value="123456789">
+            <label for="new-date">새 출발일:</label>
+            <input type="date" id="new-date" name="new-date"><br><br>
+            <label for="new-time">새 출발 시간:</label>
+            <input type="time" id="new-time" name="new-time"><br><br>
+            <input type="submit" value="예매 변경">
+        </form>
+        <br>
+        <form id="cancel-form" data-action-type="cancel" onsubmit="handleFormSubmission(event)">
+            <input type="hidden" id="reservation-number" name="reservation-number" value="123456789">
+            <button type="submit">예매 취소</button>
+        </form>
+    </div>
+</body>
+</html>

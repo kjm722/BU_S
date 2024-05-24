@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bus Schedule</title>
+</head>
+<body>
+    <form action='/search'>
+      <label for="bus-dp-combo-box">Destination:</label>
+      <select id='bus-dp-combo-box'>
+        <option value="">Select Destination</option>
+      </select>
+      <label for="bus-dp-time-combo-box">Time:</label>
+      <select id="bus-dp-time-combo-box">
+        <option value="">Select Dp Time</option>
+    </select>
+    </form>
+    <form action='/search'>
+      <label for="bus-al-combo-box">Destination:</label>
+      <select id='bus-al-combo-box'>
+        <option value="">Select Destination</option>
+      </select>
+      <label for="bus-al-time-combo-box">Time:</label>
+      <select id="bus-al-time-combo-box">
+        <option value="">Select Al Time</option>
+    </select>
+    </form>
+    <h2>회원가입</h2>
+  <form action="/signup" method="post">
+    <label for="stdname">사용자 이름:</label><br>
+    <input type="text" id="stdname" name="stdname"><br>
+    <label for="stdpw">비밀번호:</label><br>
+    <input type="password" id="stdpw" name="stdpw"><br><br>
+    <label for="stdno">학번:</label><br>
+    <input type="text" id="stdno" name="stdno"><br>
+    <label for="stddept">학부:</label><br>
+    <input type="text" id="stddept" name="stddept"><br>
+    <label for="stdphone">전화번호:</label><br>
+    <input type="text" id="stdphone" name="stdphone"><br>
+    <input type="submit" value="회원가입">
+  </form>
+
+  <h2>로그인</h2>
+  <form action="/login" method="post">
+    <label for="login_stdno">학번:</label><br>
+    <input type="text" id="login_stdno" name="login_stdno"><br>
+    <label for="login_stdpw">비밀번호:</label><br>
+    <input type="password" id="login_stdpw" name="login_stdpw"><br><br>
+    <input type="submit" value="로그인">
+  </form>
+    <script>
+        // 서버에서 콤보박스 데이터를 가져와서 옵션을 추가하는 코드를 작성합니다
+        /*fetch('/combo-box-data')
+          .then(response => response.json())
+          .then(data => {
+            const comboBox1 = document.getElementById('combo-box-1');
+            //const comboBox2 = document.getElementById('combo-box-2');
+    
+            data.forEach(option => {
+              // 각 콤보박스에 옵션을 추가합니다
+              const optionElement = document.createElement('option');
+              optionElement.text = option;
+              comboBox1.add(optionElement);
+            });
+          })
+          .catch(error => console.error('Error fetching combo box data:', error));*/
+          // 첫 번째 콤보박스에 busDP 값들을 추가하는 코드
+        fetch('/bus-dp')
+          .then(response => response.json())
+          .then(data => {
+            const busDPComboBox = document.getElementById('bus-dp-combo-box');
+            data.forEach(busDP => {
+              const option = document.createElement('option');
+              option.text = busDP;
+              option.value = busDP;
+              busDPComboBox.add(option);
+            });
+          })
+          .catch(error => console.error('Error fetching bus DP data:', error));
+
+        // 첫 번째 콤보박스의 선택에 따라 두 번째 콤보박스에 busTime 값들을 추가하는 코드
+        document.getElementById('bus-dp-combo-box').addEventListener('change', function() {
+            const busDP = this.value;
+            const busTimeComboBox = document.getElementById('bus-dp-time-combo-box');
+            busTimeComboBox.innerHTML = '<option value="">Select Dp Time</option>'; // 초기화
+
+            if (busDP) {
+                fetch(`/bus-dp-times?busDP=${encodeURIComponent(busDP)}`)
+                  .then(response => response.json())
+                  .then(data => {
+                    data.forEach(busTime => {
+                      const option = document.createElement('option');
+                      option.text = busTime;
+                      option.value = busTime;
+                      busTimeComboBox.add(option);
+                    });
+                  })
+                  .catch(error => console.error('Error fetching bus times:', error));
+            }
+        });
+
+        fetch('/bus-al')
+          .then(response => response.json())
+          .then(data => {
+            const busAlComboBox = document.getElementById('bus-al-combo-box');
+            data.forEach(busAl => {
+              const option = document.createElement('option');
+              option.text = busAl;
+              option.value = busAl;
+              busAlComboBox.add(option);
+            });
+          })
+          .catch(error => console.error('Error fetching bus DP data:', error));
+
+        document.getElementById('bus-al-combo-box').addEventListener('change', function() {
+            const busAl = this.value;
+            const busTimeComboBox = document.getElementById('bus-al-time-combo-box');
+            busTimeComboBox.innerHTML = '<option value="">Select Al Time</option>'; // 초기화
+
+            if (busAl) {
+                fetch(`/bus-al-times?busAl=${encodeURIComponent(busAl)}`)
+                  .then(response => response.json())
+                  .then(data => {
+                    data.forEach(busTime => {
+                      const option = document.createElement('option');
+                      option.text = busTime;
+                      option.value = busTime;
+                      busTimeComboBox.add(option);
+                    });
+                  })
+                  .catch(error => console.error('Error fetching bus times:', error));
+            }
+        });
+      </script>
+</body>
+</html>

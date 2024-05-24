@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>백석대 버스 노선 조회</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/timetable_style.css">
+</head>
+<body style="background-color: #f2f2f2;">
+    <div class="main">
+        <div class="header">
+            <h1><a href="./index.html">
+                <img src="./logo.jpg">
+            </a></h1>
+            <div class="bar">
+                <ul>
+                    <li><a href="./timetable.html">노선 조회</a></li>
+                    <li><a href="./ticket.html">버스 예매</a></li>
+                    <li><a href="./modify.html">예매 내역</a></li>
+                    <li><a href="./login.html">로그인</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div id="tabs">
+        <div class="tab active" data-target="route">노선 조회</div>
+        <div class="tab" data-target="time">시간 조회</div>
+    </div>
+    <div id="tab-contents">
+        <div id="route" class="tab-content active">
+            <h2>등교 노선 및 시간 조회</h2>
+            <p><br>통학버스 노선 및 시간은 사정에 따라 변경되거나 운행 종료될 수 있습니다.<br>
+            통학버스 도착시간은 교통상황에 따라 수업 시간에 맞춰 도착하지 못할 수 있습니다.<br>
+            통학버스 승차권은 반드시 탑승 2일 전까지는 예매를 하여야 합니다.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>노선</th>
+                        <th>요금</th>
+                        <th>요일</th>
+                        <th>운행시간</th>
+                        <th>승차위치</th>
+                        <th>비고</th>
+                    </tr>
+                    <tr>
+                        <td>영등포</td>
+                        <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 06:50</td>
+                        <td>영등포역 5번 출구<br>여의도방향 한전 앞<br>(스타벅스)</td>
+                        <td>하교차량<br>양재.강남</td>
+                    </tr>
+                    <tr>
+                        <td>교대</td>
+                        <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                        <td>월~목<br>금</td>
+                        <td>1회차 - 07:30, 2회차 - 08:30<br>1회차 - 07:30</td>
+                        <td>교대역 8번,14번 출구<br>세연타워 앞</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>잠실</td>
+                        <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 07:00</td>
+                        <td>잠실역 4번 출구 (롯데마트)<br>전방 150M 시계탑 소화전앞</td>
+                        <td>하교차량<br>양재.강남</td>
+                    </tr>
+                    <tr>
+                        <td>분당</td>
+                        <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                        <td>월~목<br>금</td>
+                        <td>1회차 - 07:30, 2회차 - 08:30<br>1회차 - 07:30</td>
+                        <td>야탑역 4번 출구<br>택시승강장(MG새마을금고)</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>인천, 송내</td>
+                        <td>요금: 6,000원<br>(카드,현금 7,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 06:20(인천 문학경기장) 06:40(송내)</td>
+                        <td>문학경기장역 1번출구<br>송내(남부역)1번 출구<br>바닥 14번 표시자리<br></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>안산</td>
+                        <td>요금: 5,500원<br>(카드,현금 6,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 07:00(중앙역) 07:10(상록수역)</td>
+                        <td>중앙역 1번 출구 택시승차장<br>상록수역 1번 출구 롯데리아 앞</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>안양</td>
+                        <td>요금: 4,900원<br>(카드,현금 6,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 07:00(안양역) 07:10(범계역)</td>
+                        <td>안양역 앞 1번가 공영주차장 앞<br>범계역 4번출구 택시승강장</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>수원</td>
+                        <td>요금: 4,900원<br>(카드,현금 6,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 07:30 법원사거리 07:40 영통입구<br>07:45 수원T/G입구 08:00 동탄이마트<br>
+                            2회차 - 08:30 법원사거리 08:40 영통입구<br>08:45 수원T/G입구 09:00 동탄이마트</td>
+                        <td>법원사거리 쉐보레매장 앞(이브자리)<br>영통입구 고가밑 버스정류장<br>
+                            수원T/G 입구 버스정류장(BMW매장앞)<br>동탄이마트 버스정류장(동탄IC방면)</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>용인</td>
+                        <td>요금: 4,900원<br>(카드,현금 6,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 07:10 용인 컬리넌 호텔 건너편<br>07:15 삼성디지털프라자 앞<br>
+                            07:30 강남대 삼거리 굿모닝외과 건물 앞<br>07:35 신갈시외버스정류소</td>
+                        <td>용인 컬리넌 호텔 건너편<br>명지대사거리근처 삼성디지털 앞<br>
+                            강남대 삼거리 굿모닝외과건물 앞<br>신갈 고속시외버스정류소</td>
+                        <td>하교차량<br>신갈 간이정류장.<br>고속도로</td>
+                    </tr>
+                    <tr>
+                        <td>수원, 병점</td>
+                        <td>요금: 4,900원<br>(카드,현금 6,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 07:00 수원역 07:15 병점</td>
+                        <td>수원역 파출소 우측 50m 앞<br>병점 홈플러스 버스정류장</td>
+                        <td>하교차량<br>운행없음</td>
+                    </tr>
+                    <tr>
+                        <td>오산, 평택</td>
+                        <td>요금: 4,900원<br>(카드,현금 6,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 07:30 오산 08:10 평택</td>
+                        <td>오산역 온누리약국 앞<br>평택대 정문입구 건너편 앞</td>
+                        <td>하교차량<br>운행없음</td>
+                    </tr>
+                    <tr>
+                        <td>죽전</td>
+                        <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                        <td>월~금</td>
+                        <td>1회차 - 7:30~07:50(수시운행)<br>2회차 - 08:50~09:00(수시운행)<br>
+                            2회차 버스 금요일 운행없음</td>
+                        <td>등교 :죽전 간이정류장.부산방면(고속도로)</td>
+                        <td>하교차량<br>양재.강남</td>
+                    </tr>
+                    <tr>
+                        <td>아산</td>
+                        <td>요금: 2,000원</td>
+                        <td>월~금</td>
+                        <td>07:40 아산시외버스터미널(모종환승장)<br>07:45 아산LG전자 앞<br>
+                            07:55 배방역 사거리 앞<br>08:00 한들물빛중학교 건너편 앞.</td>
+                        <td>.아산시외버스터미널(모종환승장)앞<br>.아산이마트 옆 LG전자 앞<br>
+                            .배방역 사거리 천안13Km표지판 앞<br>.한들물빛중학교 건너편 육교 앞</td>
+                        <td>승차권 구입은<br>진리관CU편의점 앞 발권기<br>
+                        하교차량 운행없음</td>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div id="time" class="tab-content">
+            <h2>하교 노선 및 시간 조회</h2>
+            <p><br>통학버스 노선 및 시간은 사정에 따라 변경되거나 운행 종료될 수 있습니다.<br>
+                통학버스 도착시간은 교통상황에 따라 수업 시간에 맞춰 도착하지 못할 수 있습니다.<br>
+                통학버스 승차권은 반드시 탑승 2일 전까지는 예매를 하여야 합니다.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>노선</th>
+                            <th>요금</th>
+                            <th>요일</th>
+                            <th>운행시간</th>
+                            <th>하차위치</th>
+                            <th>비고</th>
+                        </tr>
+                        <tr>
+                            <td>영등포</td>
+                            <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                            <td colspan="4">하교차량 양재.강남</td>
+                        </tr>
+                        <tr>
+                            <td>교대</td>
+                            <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                            <td>월~목<br>금</td>
+                            <td>12:30, 13:30, 14:30 15:30, 16:30, 17:30, 18:20<br>14:30, 15:30, 16:30</td>
+                            <td>신갈정류장, 죽전정류장<br>양재, 강남</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>잠실</td>
+                            <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                            <td colspan="4">하교차량 양재.강남</td>
+                        </tr>
+                        <tr>
+                            <td>분당</td>
+                            <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                            <td>월~목<br>금</td>
+                            <td>14:30, 15:30 16:30, 18:20<br>16:30</td>
+                            <td>죽전정류장, 서현역,<br>야탑역</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>인천, 송내</td>
+                            <td>요금: 6,000원<br>(카드,현금 7,000원)</td>
+                            <td>월~목<br>금</td>
+                            <td>16:30, 18:20<br>16:30</td>
+                            <td>송내 남부역</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>안산</td>
+                            <td>요금: 5,500원<br>(카드,현금 6,000원)</td>
+                            <td>월~목<br>금</td>
+                            <td>16:30, 18:20<br>16:30</td>
+                            <td>상록수역, 중앙역</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>안양</td>
+                            <td>요금: 4,900원<br>(카드,현금 6,000원)</td>
+                            <td>월~목<br>금</td>
+                            <td>16:30<br>금요일 운행없음</td>
+                            <td>신갈정류장, 범계역, 안양역</td>
+                            <td>동수원 경유</td>
+                        </tr>
+                        <tr>
+                            <td>수원</td>
+                            <td>요금: 4,900원<br>(카드,현금 6,000원)</td>
+                            <td>월~목</td>
+                            <td>16:30 (신갈TG, 영통입구, 법원사거리)</td>
+                            <td>신갈TG, 신갈정류장</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>용인</td>
+                            <td>요금: 4,900원<br>(카드,현금 6,000원)</td>
+                            <td colspan="4">하교차량 신갈 간이정류장. 고속도로</td>
+                        </tr>
+                        <tr>
+                            <td>죽전</td>
+                            <td>요금: 5,200원<br>(카드,현금 6,000원)</td>
+                            <td colspan="2"></td>
+                            <td></td>
+                            <td>하교 :죽전 간이정류장.서울방면(고속도로)</td>
+                            <td>하교차량<br>양재.강남</td>
+                        </tr>
+                    </thead>
+                </table>
+        </div>
+    </div>
+    <script>
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

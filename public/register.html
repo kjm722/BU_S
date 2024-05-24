@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 및 회원가입</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/register_style.css">
+</head>
+<body style="background-color: #f2f2f2;">
+    <div class="main">
+        <div class="header">
+            <h1><a href="./index.html">
+                <img src="./logo.jpg">
+            </a></h1>
+            <div class="bar">
+                <ul>
+                    <li><a href="./timetable.html">노선 조회</a></li>
+                    <li><a href="./ticket.html">버스 예매</a></li>
+                    <li><a href="./modify.html">예매 내역</a></li>
+                    <li><a href="./login.html">로그인</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div id="contents">
+        <div id="consumer" class="content active">
+            <h2 align="center">학부생 회원가입</h2>
+            <form action="/signup" method="POST">
+                <div class="input-box">
+                    학부: <input type="text" id="stddept" name="stddept" placeholder="학부를 입력하세요" required><br>
+                    학번: <input type="text" id="stdno" name="stdno" placeholder="학번을 입력하세요" required><br>
+                    이름: <input type="text" id="stdname" name="stdname" placeholder="이름을 입력하세요" required><br>
+                    비밀번호: <input type="password" id="stdpw" name="stdpw" placeholder="비밀번호를 입력하세요" required><br>
+                    전화번호: <input type="text" id="stdphone" name="stdphone" placeholder="전화번호를 입력하세요" required><br>
+                    <input type="submit" class="submit" value="회원가입">
+                </div>
+            </form>
+        </div>
+    </div>  
+</body>
+</html>
