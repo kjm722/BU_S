@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 및 회원가입</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/login_style.css">
+</head>
+
+<body style="background-color: #f2f2f2;">
+    <div class="main">
+        <div class="header">
+            <h1><a href="./index.html">
+                    <img src="./logo.jpg">
+                </a></h1>
+            <div class="bar">
+                <ul>
+                    <li><a href="./timetable.html">노선 조회</a></li>
+                    <li><a href="./ticket.html">버스 예매</a></li>
+                    <li><a href="./modify.html">예매 내역</a></li>
+                    <li><a id="login-link" href="./login.html">로그인</a></li>
+                    <li><button id="logout-button" style="display:none;">로그아웃</button></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div id="contents">
+        <div id="consumer" class="content active">
+            <h2 align="center">학부생 로그인</h2>
+            <form id="login-form" method="POST">
+                <div class="input-box">
+                    <input type="text" id="stdno" name="stdno" placeholder="학번" required autocomplete=""><br>
+                    <input type="password" id="stdpw" name="stdpw" placeholder="비밀번호" required autocomplete="current-password">
+                    <input type="submit" class="submit" value="Login">
+                </div>
+
+                <div class="register-link">
+                    <p>Don't have an account? <a href="./register.html">회원가입</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const login_stdno = formData.get('stdno');
+            const login_stdpw = formData.get('stdpw');
+
+            fetch('/login', {
+                method: 'POST',
+                body: JSON.stringify({ stdno, stdpw }),
+                headers: {
+                    /*'Accept':'application/json',
+                    'Content-Type': 'application/json'*/
+                },
+                credentials: 'include'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('로그인 실패');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert(data.message);
+                    if (data.message === '로그인 성공') {
+                        document.getElementById('login-link').style.display = 'none';
+                        document.getElementById('logout-button').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('로그인 요청 실패:', error);
+                    alert('로그인 요청에 실패했습니다.');
+                });
+        });
+
+        document.getElementById('logout-button').addEventListener('click', function () {
+            fetch('/logout', {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('login-link').style.display = 'block';
+                    document.getElementById('logout-button').style.display = 'none';
+                })
+                .catch(error => console.error('로그아웃 요청 실패:', error));
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('/check-login-status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.loggedIn) {
+                        document.getElementById('login-link').style.display = 'none';
+                        document.getElementById('logout-button').style.display = 'block';
+                    }
+                });
+        });
+    </script>
+</body>
+
+</html>

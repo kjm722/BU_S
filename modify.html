@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>예매 변경 및 취소</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/modify.css">
+</head>
+
+<body style="background-color: #f2f2f2;">
+    <div class="main">
+        <div class="header">
+            <h1><a href="./index.html">
+                    <img src="./logo.jpg" alt="백석대 로고">
+                </a></h1>
+            <div class="bar">
+                <ul>
+                    <li><a href="./timetable.html">노선 조회</a></li>
+                    <li><a href="./ticket.html">버스 예매</a></li>
+                    <li><a href="./modify.html">예매 내역</a></li>
+                    <li><a href="./login.html">로그인</a></li>
+                </ul>
+            </div>
+        </div>
+        <br><br>
+        <div class="container">
+            <h2>예매 내역 확인</h2>
+            <table id="ticket-table">
+                <thead>
+                    <tr>
+                        <th>티켓 번호</th>
+                        <th>출발일</th>
+                        <th>출발 시간</th>
+                        <th>출발지 - 도착지</th>
+                        <th>좌석 번호</th>
+                        <th>액션</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>123456789</td>
+                        <td>2024-06-01</td>
+                        <td>07:00</td>
+                        <td>서울 - 천안</td>
+                        <td>12A</td>
+                        <td><a href="./modify_action.html" class="button">예매 변경 및 취소</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // 로그인 여부를 확인하고, 로그인되어 있지 않으면 로그인 페이지로 이동
+            fetch('/check-login-status')
+                .then(response => {
+                    if (!response.ok) {
+                        redirectToLoginPage();
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(user => {
+                    // 사용자 정보가 있으면 학번을 사용하여 예매 내역 조회
+                    if (user && user.stdNo) {
+                        fetch(`/tickets/${user.stdNo}`)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('네트워크 응답에 문제가 있습니다');
+                                }
+                                return response.json();
+                            })
+                            .then(tickets => {
+                                const tableBody = document.getElementById('ticket-table').getElementsByTagName('tbody')[0];
+                                tickets.forEach(ticket => {
+                                    const row = tableBody.insertRow();
+                                    row.insertCell(0).innerText = ticket.tKNo;
+                                    row.insertCell(1).innerText = ticket.tkDate;
+                                    row.insertCell(2).innerText = ticket.busTime;
+                                    row.insertCell(3).innerText = ticket.busDP + ' - ' + ticket.busAl;
+                                    row.insertCell(4).innerHTML = '<a href="./modify_action.html" class="button">예매 변경 및 취소</a>';
+                                });
+                            })
+                            .catch(error => {
+                                console.error('티켓 정보를 불러오는 중 오류가 발생했습니다:', error);
+                                alert('티켓 정보를 불러오는 중 오류가 발생했습니다');
+                            });
+                    } else {
+                        // 로그인되어 있지 않으면 로그인 페이지로 이동
+                        redirectToLoginPage();
+                    }
+                })
+                .catch(error => {
+                    console.error('로그인 상태를 확인하는 중 오류가 발생했습니다:', error);
+                    alert('로그인 상태를 확인하는 중 오류가 발생했습니다');
+                });
+        });
+    </script>
+</body>
+
+</html>
