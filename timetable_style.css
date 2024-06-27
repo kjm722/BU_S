@@ -1,0 +1,90 @@
+*{
+    font-family: "Noto Sans KR", sans-serif;
+    list-style: none;
+    text-decoration: none;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    color:black;    
+}
+
+.main .header{
+    font-size: 20px;
+    width: 80%;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main .header h1 a img{
+    width: 70%;
+    height:70px;
+    background: none;
+    display: flex;
+}
+.main .bar ul li{
+    display: inline-block;
+    margin:0 30px;
+}
+
+.main .bar ul li a{
+    text-decoration: none;
+    color: black;
+}
+
+.main .bar ul li a:hover{
+    color: aqua;
+}
+
+#tabs {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.tab {
+    flex: 1;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.tab.active {
+    background-color: #fff;
+    border-top: 3px solid #3399CC;
+    font-weight: bold;
+    color: #3399CC;
+}
+.tab-content {
+    display: none;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+.tab-content.active {
+    display: block;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+table, th, td {
+    border: 1px solid #ccc;
+    text-align: center;
+}
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+th {
+    background-color: #f1f1f1;
+    color: #3399CC;
+}

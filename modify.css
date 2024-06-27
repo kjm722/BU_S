@@ -1,0 +1,80 @@
+* {
+    font-family: "Noto Sans KR", sans-serif;
+    list-style: none;
+    text-decoration: none;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    color: black;
+}
+
+.main .header {
+    font-size: 20px;
+    width: 80%;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.main .header h1 a img {
+    width: 70%;
+    height: 70px;
+    background: none;
+    display: flex;
+}
+
+.main .bar ul li {
+    display: inline-block;
+    margin: 0 30px;
+}
+
+.main .bar ul li a {
+    text-decoration: none;
+    color: black;
+}
+
+.main .bar ul li a:hover {
+    color: aqua;
+}
+
+.container {
+    background-color: white; /* 배경을 하얀색으로 설정 */
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.container h2 {
+    background-color: white; /* 배경을 하얀색으로 설정 */
+    margin: 0;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: white; /* 표의 배경을 하얀색으로 설정 */
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #f1f1f1;
+    color: #3399CC;
+}
+.container table tbody tr td a{
+    color:orangered;
+}

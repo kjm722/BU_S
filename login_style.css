@@ -1,0 +1,82 @@
+*{
+    font-family: "Noto Sans KR", sans-serif;
+    list-style: none;
+    text-decoration: none;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    color:black;    
+}
+
+.main .header{
+    font-size: 20px;
+    width: 80%;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main .header h1 a img{
+    width: 70%;
+    height:70px;
+    background: none;
+    display: flex;
+}
+.main .bar ul li{
+    display: inline-block;
+    margin:0 30px;
+}
+
+.main .bar ul li a{
+    text-decoration: none;
+    color: black;
+}
+
+.main .bar ul li a:hover{
+    color: aqua;
+}
+
+#contents {
+    display: flex;
+    justify-content: center;
+}
+
+.content {
+    display: none;
+    background-color: #fff;
+    padding: 20px;
+    max-width: 80%; /* 수정: 최대 너비 설정 */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+.content.active {
+    display: block;
+}
+.content .register-link{
+    font-size: 20px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.content .register-link p a{
+    color:rosybrown;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+input {
+    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}

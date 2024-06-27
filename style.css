@@ -1,0 +1,76 @@
+*{
+    font-family: "Noto Sans KR", sans-serif;
+    list-style: none;
+    text-decoration: none;
+    border-collapse: collapse;
+    margin: 0;
+    padding: 0;
+    color:black;    
+}
+.main{
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(rgba(255, 255, 255, 0.6),rgba(255, 255, 255, 0.6)), url(../bus.jpg)center/cover no-repeat fixed;
+}
+
+.main .header{
+    font-size: 20px;
+    width: 80%;
+    height: 80px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main .header h1 img{
+    width: 70%;
+    height:70px;
+    background: none;
+    display: flex;
+}
+.main .bar ul li{
+    display: inline-block;
+    margin:0 30px;
+}
+
+.main .bar ul li a{
+    text-decoration: none;
+    color: black;
+}
+
+.main .bar ul li a:hover{
+    color: aqua;
+}
+
+.main .notice{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color:black;
+    text-align: center;
+}
+
+.main .notice h2{
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+.main .notice p{
+    font-size: 22px;
+    color: red;
+}
+
+.main .notice button{
+    border: 1px solid gray;
+    color: black;
+    font-size: 20px;
+    padding: 15px 20px;
+    border-radius: 20px;
+    margin-top: 30px;
+    cursor: pointer;
+}
+.main .notice button:hover{
+    background-color: rgb(43, 43, 43);
+    color: white;
+}
