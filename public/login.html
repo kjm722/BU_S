@@ -20,8 +20,7 @@
                     <li><a href="./timetable.html">노선 조회</a></li>
                     <li><a href="./ticket.html">버스 예매</a></li>
                     <li><a href="./modify.html">예매 내역</a></li>
-                    <li><a id="login-link" href="./login.html">로그인</a></li>
-                    <li><button id="logout-button" style="display:none;">로그아웃</button></li>
+                    <li><a id="login-logout" href="./login.html"></a></li>
                 </ul>
             </div>
         </div>
@@ -30,10 +29,12 @@
     <div id="contents">
         <div id="consumer" class="content active">
             <h2 align="center">학부생 로그인</h2>
-            <form id="login-form" method="POST">
+            <form id="login-form">
                 <div class="input-box">
-                    <input type="text" id="stdno" name="stdno" placeholder="학번" required autocomplete=""><br>
-                    <input type="password" id="stdpw" name="stdpw" placeholder="비밀번호" required autocomplete="current-password">
+                    <input type="text" id="login_stdno" name="login_stdno" placeholder="학번" required
+                        autocomplete=""><br>
+                    <input type="password" id="login_stdpw" name="login_stdpw" placeholder="비밀번호" required
+                        autocomplete="current-password">
                     <input type="submit" class="submit" value="Login">
                 </div>
 
@@ -47,60 +48,67 @@
         document.getElementById('login-form').addEventListener('submit', function (event) {
             event.preventDefault();
             const formData = new FormData(this);
-            const login_stdno = formData.get('stdno');
-            const login_stdpw = formData.get('stdpw');
+            const login_stdno = document.getElementById('login_stdno').value;
+            const login_stdpw = document.getElementById('login_stdpw').value;
 
             fetch('/login', {
                 method: 'POST',
-                body: JSON.stringify({ stdno, stdpw }),
+                body: JSON.stringify({ login_stdno, login_stdpw }),
                 headers: {
-                    /*'Accept':'application/json',
-                    'Content-Type': 'application/json'*/
+                    'Content-Type': 'application/json'
                 },
                 credentials: 'include'
             })
                 .then(response => {
-                    if (!response.ok) {
-                        throw new Error('로그인 실패');
+                    if (response.ok) {
+                        return response.json();
                     }
-                    return response.json();
+                    throw new Error('로그인 실패');
                 })
                 .then(data => {
                     alert(data.message);
-                    if (data.message === '로그인 성공') {
-                        document.getElementById('login-link').style.display = 'none';
-                        document.getElementById('logout-button').style.display = 'block';
-                    }
+                    console.log(data.message);
+                    window.location.href = '/';
                 })
                 .catch(error => {
                     console.error('로그인 요청 실패:', error);
+                    console.log(login_stdno, login_stdpw);
                     alert('로그인 요청에 실패했습니다.');
                 });
         });
 
-        document.getElementById('logout-button').addEventListener('click', function () {
-            fetch('/logout', {
-                method: 'POST'
-            })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                    document.getElementById('login-link').style.display = 'block';
-                    document.getElementById('logout-button').style.display = 'none';
-                })
-                .catch(error => console.error('로그아웃 요청 실패:', error));
-        });
+        let isLoggedIn = false;
 
-        document.addEventListener('DOMContentLoaded', function () {
-            fetch('/check-login-status')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.loggedIn) {
-                        document.getElementById('login-link').style.display = 'none';
-                        document.getElementById('logout-button').style.display = 'block';
-                    }
-                });
-        });
+        fetch('/check-login-status')
+            .then(response => response.json())
+            .then(data => {
+                const authLink = document.getElementById('login-logout');
+                if (data.loggedIn) {
+                    authLink.textContent = '로그아웃';
+                    authLink.href = '#';
+                    authLink.onclick = (event) => {
+                        event.preventDefault();
+                        fetch('/logout', {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === '로그아웃 성공') {
+                                    window.location.href = '/';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('로그아웃 요청 실패:', error);
+                            });
+                    };
+                } else {
+                    authLink.textContent = '로그인';
+                    authLink.href = '/login.html';
+                }
+            })
+            .catch(error => {
+                console.error('로그인 상태 확인 요청 실패:', error);
+            });
     </script>
 </body>
 

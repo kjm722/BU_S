@@ -1,40 +1,108 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예매 변경 및 취소 액션</title>
+    <title>예매 변경 및 취소</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/action_style.css">
+    <link rel="stylesheet" href="./css/modify.css">
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRoutes();
+        });
+
+        function fetchRoutes() {
+            fetch('/get-routes')
+                .then(response => response.json())
+                .then(data => populateSelect('new-route', data))
+                .catch(error => console.error('Error fetching routes:', error));
+        }
+
+        function fetchTimes() {
+            const route = document.getElementById('new-route').value;
+            if (!route) {
+                console.error('Route parameter is missing');
+                return;
+            }
+            fetch(`/get-times?busTime=${encodeURIComponent(route)}`)
+                .then(response => response.json())
+                .then(data => populateSelect('new-time', data))
+                .catch(error => console.error('Error fetching times:', error));
+        }
+
+        function fetchSeats() {
+            const route = document.getElementById('new-route').value;
+            const time = document.getElementById('new-time').value;
+            if (!route || !time) {
+                console.error('Route or time parameter is missing');
+                return;
+            }
+            fetch(`/get-seats?new-route=${encodeURIComponent(route)}&new-time=${encodeURIComponent(time)}`)
+                .then(response => response.json())
+                .then(data => populateSelect('new-seat-number', data))
+                .catch(error => console.error('Error fetching seats:', error));
+        }
+
+        function populateSelect(elementId, data) {
+            const select = document.getElementById(elementId);
+            select.innerHTML = '<option value="">선택하세요</option>'; // 기본 옵션 추가
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.value;
+                option.text = item.text;
+                select.appendChild(option);
+            });
+        }
+
         function handleFormSubmission(event) {
             event.preventDefault();
             var form = event.target;
             var actionType = form.dataset.actionType;
+            var data = new FormData(form);
+            var endpoint = actionType === 'change' ? '/modify-reservation' : '/cancel-reservation';
             var message = '';
+            var messageColor = '';
 
-            if (actionType === 'change') {
-                message = '예매 정보가 변경 되었습니다.';
-            } else if (actionType === 'cancel') {
-                message = '예매가 취소되었습니다.';
-            }
+            fetch(endpoint, {
+                method: 'POST',
+                body: JSON.stringify(Object.fromEntries(data)),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (actionType === 'change') {
+                        message = '예매 정보가 변경되었습니다.';
+                        messageColor = 'green';
+                    } else if (actionType === 'cancel') {
+                        message = '예매가 취소되었습니다.';
+                        messageColor = 'red';
+                    }
 
-            document.getElementById('message').textContent = message;
+                    var messageElement = document.getElementById('message');
+                    messageElement.textContent = data.message || message;
+                    messageElement.style.color = messageColor;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('작업 중 오류가 발생했습니다.');
+                });
         }
     </script>
 </head>
+
 <body style="background-color: #f2f2f2;">
     <div class="main">
         <div class="header">
-            <h1><a href="./index.html">
-                <img src="./logo.jpg" alt="백석대 로고">
-            </a></h1>
+            <h1><a href="./index.html"><img src="./logo.jpg" alt="백석대 로고"></a></h1>
             <div class="bar">
                 <ul>
                     <li><a href="./timetable.html">노선 조회</a></li>
                     <li><a href="./ticket.html">버스 예매</a></li>
                     <li><a href="./modify.html">예매 내역</a></li>
-                    <li><a href="./login.html">로그인</a></li>
+                    <li><a id="login-logout" href="./login.html">로그인</a></li>
                 </ul>
             </div>
         </div>
@@ -43,20 +111,51 @@
     <div class="container">
         <h2>예매 변경 및 취소</h2>
         <p>아래에서 예매 내역을 변경하거나 취소할 수 있습니다.</p>
-        <p id="message" style="color: green; font-weight: bold;"></p>
+        <p id="message" style="font-weight: bold;"></p>
         <form id="change-form" data-action-type="change" onsubmit="handleFormSubmission(event)">
-            <input type="hidden" id="reservation-number" name="reservation-number" value="123456789">
+            <label for="reservation-number">티켓 번호:</label>
+            <select id="reservation-number" name="tkNo">
+                <option value="">선택하세요</option>
+                <!-- 예매 번호 옵션들 -->
+            </select><br><br>
+
             <label for="new-date">새 출발일:</label>
-            <input type="date" id="new-date" name="new-date"><br><br>
-            <label for="new-time">새 출발 시간:</label>
-            <input type="time" id="new-time" name="new-time"><br><br>
-            <input type="submit" value="예매 변경">
+            <input type="date" id="new-date" name="newDate"><br><br>
+
+            <label for="new-route">새 노선:</label>
+            <select id="new-route" name="newRouteId" onchange="fetchTimes()">
+                <option value="">선택하세요</option>
+                <!-- 새 노선 옵션들 -->
+            </select><br><br>
+            <label for="new-time">출발 시간:</label>
+            <select type="time" id="new-time" name="time" onchange="fetchSeats()">
+                <option value="">선택하세요</option>
+                <!-- 시간 옵션들 -->
+            </select><br><br>
+
+            <label for="new-seat-number">좌석 선택:</label>
+            <select id="new-seat-number" name="new-seat-number">
+                <option value="">선택하세요</option>
+                <!-- 좌석 옵션들 -->
+                <script>
+                    for (let i = 1; i <= 48; i++) {
+                        document.write('<option value="' + i + '">' + i + '</option>');
+                    }
+                </script>
+            </select><br><br>
+
+            <button type="submit">예매 변경</button>
         </form>
-        <br>
+
         <form id="cancel-form" data-action-type="cancel" onsubmit="handleFormSubmission(event)">
-            <input type="hidden" id="reservation-number" name="reservation-number" value="123456789">
+            <label for="cancel-reservation-number">취소할 티켓 번호:</label>
+            <select id="cancel-reservation-number" name="tkNo">
+                <!-- 예매 번호 옵션들 -->
+            </select><br><br>
+
             <button type="submit">예매 취소</button>
         </form>
     </div>
 </body>
+
 </html>

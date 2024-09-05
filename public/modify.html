@@ -20,7 +20,7 @@
                     <li><a href="./timetable.html">노선 조회</a></li>
                     <li><a href="./ticket.html">버스 예매</a></li>
                     <li><a href="./modify.html">예매 내역</a></li>
-                    <li><a href="./login.html">로그인</a></li>
+                    <li><a id="login-logout" href="./login.html"></a></li>
                 </ul>
             </div>
         </div>
@@ -52,51 +52,92 @@
         </div>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // 로그인 여부를 확인하고, 로그인되어 있지 않으면 로그인 페이지로 이동
+        function checkLoginStatus() {
             fetch('/check-login-status')
                 .then(response => {
                     if (!response.ok) {
-                        redirectToLoginPage();
-                        return;
+                        throw new Error('서버 응답 오류');
                     }
                     return response.json();
                 })
-                .then(user => {
-                    // 사용자 정보가 있으면 학번을 사용하여 예매 내역 조회
-                    if (user && user.stdNo) {
-                        fetch(`/tickets/${user.stdNo}`)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('네트워크 응답에 문제가 있습니다');
-                                }
-                                return response.json();
-                            })
-                            .then(tickets => {
-                                const tableBody = document.getElementById('ticket-table').getElementsByTagName('tbody')[0];
-                                tickets.forEach(ticket => {
-                                    const row = tableBody.insertRow();
-                                    row.insertCell(0).innerText = ticket.tKNo;
-                                    row.insertCell(1).innerText = ticket.tkDate;
-                                    row.insertCell(2).innerText = ticket.busTime;
-                                    row.insertCell(3).innerText = ticket.busDP + ' - ' + ticket.busAl;
-                                    row.insertCell(4).innerHTML = '<a href="./modify_action.html" class="button">예매 변경 및 취소</a>';
-                                });
-                            })
-                            .catch(error => {
-                                console.error('티켓 정보를 불러오는 중 오류가 발생했습니다:', error);
-                                alert('티켓 정보를 불러오는 중 오류가 발생했습니다');
-                            });
+                .then(data => {
+                    if (data.loggedIn) {
+                        // 사용자가 로그인되어 있음
+                        // 여기에서 예매 내역 조회 등 추가 동작 수행 가능
+                        fetchTickets(data.user.stdno);
+                        console.log('사용자는 로그인되어 있습니다.');
                     } else {
-                        // 로그인되어 있지 않으면 로그인 페이지로 이동
-                        redirectToLoginPage();
+                        // 사용자가 로그인되어 있지 않음
+                        window.location.href = '/login'
+                        alert('로그인하시오.')
+                        console.log('사용자는 로그인되어 있지 않습니다.');
                     }
                 })
                 .catch(error => {
-                    console.error('로그인 상태를 확인하는 중 오류가 발생했습니다:', error);
-                    alert('로그인 상태를 확인하는 중 오류가 발생했습니다');
+                    console.error('로그인 상태 확인 중 오류 발생:', error);
+                    // 오류 처리
                 });
-        });
+        }
+        function fetchTickets(stdNo) {
+            fetch(`/tickets`)
+                .then(response => {
+                    console.log('서버 응답 상태 코드:', response.status);
+                    if (!response.ok) {
+                        throw new Error('서버 응답 오류');
+                    }
+                    return response.json();
+                })
+                .then(tickets => {
+                    // 예매 내역을 테이블에 추가
+                    const tableBody = document.getElementById('ticket-table').getElementsByTagName('tbody')[0];
+                    tickets.forEach(ticket => {
+                        const row = tableBody.insertRow();
+                        row.insertCell(0).innerText = ticket.tKNo;
+                        row.insertCell(1).innerText = ticket.formattedDate;
+                        row.insertCell(2).innerText = ticket.formattedTime;
+                        row.insertCell(3).innerText = ticket.busDP + ' - ' + ticket.busAl;
+                        row.insertCell(4).innerText = ticket.seatNo;
+                        row.insertCell(5).innerHTML = '<a href="./modify_action.html" class="button">예매 변경 및 취소</a>';
+                    });
+                })
+                .catch(error => {
+                    console.error('예매 내역 조회 중 오류 발생:', error);
+                    console.log(error)// 오류 처리
+                });
+        }
+
+        // 페이지 로드 시 로그인 상태 확인 요청 보내기
+        document.addEventListener('DOMContentLoaded', checkLoginStatus);
+        fetch('/check-login-status')
+            .then(response => response.json())
+            .then(data => {
+                const authLink = document.getElementById('login-logout');
+                if (data.loggedIn) {
+                    authLink.textContent = '로그아웃';
+                    authLink.href = '#';
+                    authLink.onclick = (event) => {
+                        event.preventDefault();
+                        fetch('/logout', {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === '로그아웃 성공') {
+                                    window.location.href = '/';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('로그아웃 요청 실패:', error);
+                            });
+                    };
+                } else {
+                    authLink.textContent = '로그인';
+                    authLink.href = './login.html';
+                }
+            })
+            .catch(error => {
+                console.error('로그인 상태 확인 요청 실패:', error);
+            });
     </script>
 </body>
 

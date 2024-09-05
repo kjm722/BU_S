@@ -1,27 +1,219 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>백석대 버스 예매/결제</title>
+    <title>통학 버스 예매하기</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/bar_style.css">
+    <link rel="stylesheet" href="./css/modify.css">
+    <script>
+        let stdNo = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchRoutes();
+            checkLoginStatus();
+        });
+
+        function fetchRoutes() {
+            fetch('/get-routes')
+                .then(response => response.json())
+                .then(data => populateSelect('route', data))
+                .catch(error => console.error('Error fetching routes:', error));
+        }
+
+        function fetchTimes() {
+            const route = document.getElementById('route').value;
+            if (!route) {
+                console.error('Route parameter is missing');
+                return;
+            }
+            fetch(`/get-times?busTime=${encodeURIComponent(route)}`)
+                .then(response => response.json())
+                .then(data => populateSelect('time', data))
+                .catch(error => console.error('Error fetching times:', error));
+        }
+
+        function fetchSeats() {
+            const route = document.getElementById('route').value;
+            const time = document.getElementById('time').value;
+            if (!route || !time) {
+                console.error('Route or time parameter is missing');
+                return;
+            }
+            fetch(`/get-seats?route=${encodeURIComponent(route)}&time=${encodeURIComponent(time)}`)
+                .then(response => response.json())
+                .then(data => populateSelect('seat-number', data))
+                .catch(error => console.error('Error fetching seats:', error));
+        }
+
+        function populateSelect(elementId, data) {
+            const select = document.getElementById(elementId);
+            select.innerHTML = '<option value="">선택하세요</option>'; // 기본 옵션 추가
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.value;
+                option.text = item.text;
+                select.appendChild(option);
+            });
+        }
+        function showConfirmation() {
+            var seatNumber = document.getElementById('seat-number').value;
+            var route = document.getElementById('route').value;
+            var date = document.getElementById('date').value;
+            var time = document.getElementById('time').value;
+
+            const confirmationMessage = `선택한 좌석 번호: ${seatNumber}\n노선: ${route}\n출발일: ${date}\n출발 시간: ${time}\n\n위의 정보로 예매하시겠습니까?`;
+
+            if (confirm(confirmationMessage)) {
+                bookTicket();
+                alert("예매가 완료되었습니다!");
+                window.location.href = "./index.html"; // 결제 페이지로 이동
+            }
+        }
+
+        function bookTicket() {
+            const route = document.getElementById('route').value;
+            const seatNo = document.getElementById('seat-number').value;
+            const tkDate = document.getElementById('date').value;
+            const tkTime = document.getElementById('time').value;
+
+            const data = {
+                routeId: route,
+                seatNo: seatNo,
+                stdNo: stdNo,
+                tkDate: tkDate,
+                tkTime: tkTime
+                
+            };
+
+            fetch('/book-ticket', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    window.location.href = "./index.html"; // 예매 후 홈 페이지로 리디렉션
+                })
+                .catch((error) => {
+                    console.error('Error booking ticket:', error);
+                });
+        }
+
+        function checkLoginStatus() {
+            fetch('/check-login-status')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('서버 응답 오류');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.loggedIn) {
+                        // 사용자가 로그인되어 있음
+                        // 여기에서 예매 내역 조회 등 추가 동작 수행 가능
+                        stdNo=data.user.stdno
+                        console.log('사용자는 로그인되어 있습니다.');
+                    } else {
+                        // 사용자가 로그인되어 있지 않음
+                        window.location.href = '/login'
+                        alert('로그인하시오.')
+                        console.log('사용자는 로그인되어 있지 않습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('로그인 상태 확인 중 오류 발생:', error);
+                    // 오류 처리
+                });
+        }
+
+        // 페이지 로드 시 로그인 상태 확인 요청 보내기
+        fetch('/check-login-status')
+            .then(response => response.json())
+            .then(data => {
+                const authLink = document.getElementById('login-logout');
+                if (data.loggedIn) {
+                    authLink.textContent = '로그아웃';
+                    authLink.href = '#';
+                    authLink.onclick = (event) => {
+                        event.preventDefault();
+                        fetch('/logout', {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === '로그아웃 성공') {
+                                    window.location.href = '/';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('로그아웃 요청 실패:', error);
+                            });
+                    };
+                } else {
+                    authLink.textContent = '로그인';
+                    authLink.href = './login.html';
+                }
+            })
+            .catch(error => {
+                console.error('로그인 상태 확인 요청 실패:', error);
+            });
+    </script>
 </head>
+
 <body style="background-color: #f2f2f2;">
     <div class="main">
         <div class="header">
             <h1><a href="./index.html">
-                <img src="./logo.jpg">
-            </a></h1>
+                    <img src="./logo.jpg" alt="백석대 로고">
+                </a></h1>
             <div class="bar">
                 <ul>
                     <li><a href="./timetable.html">노선 조회</a></li>
                     <li><a href="./ticket.html">버스 예매</a></li>
                     <li><a href="./modify.html">예매 내역</a></li>
-                    <li><a href="./login.html">로그인</a></li>
+                    <li><a id="login-logout" href="./login.html">로그인</a></li>
                 </ul>
             </div>
         </div>
     </div>
+    <br><br>
+    <div class="container">
+        <h2>버스 노선 시간 좌석 선택</h2>
+        <p>버스의 노선과 시간과 좌석을 선택해주세요.</p>
+        <form id="bus-route-form">
+            <label for="route">노선 선택:</label>
+            <select id="route" name="route" onchange="fetchTimes()">
+                <option value="">선택하세요</option>
+                <!-- 노선 옵션들 -->
+            </select><br><br>
+
+            <label for="date">출발일:</label>
+            <input type="date" id="date" name="date"><br><br>
+
+            <label for="time">출발 시간:</label>
+            <select type="time" id="time" name="time" onchange="fetchSeats()">
+                <option value="">선택하세요</option>
+                <!-- 시간 옵션들 -->
+            </select><br><br>
+
+            <label for="seat-number">좌석 선택:</label>
+            <select id="seat-number" name="seat-number">
+                <option value="">선택하세요</option>
+                <!-- 좌석 옵션들 -->
+                <script>
+                    for (let i = 1; i <= 48; i++) {
+                        document.write('<option value="' + i + '">' + i + '</option>');
+                    }
+                </script>
+            </select><br><br>
+            <button type="button" onclick="showConfirmation()">예매하기</button>
+        </form>
+    </div>
 </body>
+
 </html>

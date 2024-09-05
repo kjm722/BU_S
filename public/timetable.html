@@ -261,6 +261,36 @@
                 document.getElementById(tab.getAttribute('data-target')).classList.add('active');
             });
         });
+        fetch('/check-login-status')
+            .then(response => response.json())
+            .then(data => {
+                const authLink = document.getElementById('login-logout');
+                if (data.loggedIn) {
+                    authLink.textContent = '로그아웃';
+                    authLink.href = '#';
+                    authLink.onclick = (event) => {
+                        event.preventDefault();
+                        fetch('/logout', {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === '로그아웃 성공') {
+                                    window.location.href = '/';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('로그아웃 요청 실패:', error);
+                            });
+                    };
+                } else {
+                    authLink.textContent = '로그인';
+                    authLink.href = '/login.html';
+                }
+            })
+            .catch(error => {
+                console.error('로그인 상태 확인 요청 실패:', error);
+            });
     </script>
 </body>
 </html>

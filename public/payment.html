@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제 페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <script>
+        function confirmBooking() {
+            if (confirm("예매하시겠습니까?")) {
+                alert("예매되었습니다!");
+                window.location.href = "modify.html"; // 예매 내역 페이지로 이동
+            }
+        }
+    </script>
+</head>
+<body style="background-color: #f2f2f2;">
+    <div class="main">
+        <div class="header">
+            <h1><a href="./index.html"><img src="./logo.jpg" alt="백석대 로고"></a></h1>
+            <div class="bar">
+                <ul>
+                    <li><a href="./timetable.html">노선 조회</a></li>
+                    <li><a href="./ticket.html">버스 예매</a></li>
+                    <li><a href="./modify.html">예매 내역</a></li>
+                    <li><a id="login-logout" href="./login.html">로그인</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br><br>
+    <div class="container">
+        <h2>결제 페이지</h2>
+        <form>
+            <p>노선: <span id="route"></span></p>
+            <p>출발일: <span id="date"></span></p>
+            <p>출발 시간: <span id="time"></span></p>
+            <p>좌석 번호: <span id="seat"></span></p>
+            <button type="button" onclick="confirmBooking()">예매</button>
+            <button type="button" onclick="history.back()">뒤로</button>
+        </form>
+    </div>
+    <script>
+        // URL 파라미터에서 값을 가져와서 표시
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('route').textContent = params.get('route');
+        document.getElementById('date').textContent = params.get('date');
+        document.getElementById('time').textContent = params.get('time');
+        document.getElementById('seat').textContent = params.get('seat');
+        function checkLoginStatus() {
+            fetch('/check-login-status')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('서버 응답 오류');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.loggedIn) {
+                        // 사용자가 로그인되어 있음
+                        // 여기에서 예매 내역 조회 등 추가 동작 수행 가능
+                        fetchTickets(data.user.stdno);
+                        console.log('사용자는 로그인되어 있습니다.');
+                    } else {
+                        // 사용자가 로그인되어 있지 않음
+                        window.location.href = '/login'
+                        alert('로그인하시오.')
+                        console.log('사용자는 로그인되어 있지 않습니다.');
+                    }
+                })
+                .catch(error => {
+                    console.error('로그인 상태 확인 중 오류 발생:', error);
+                    // 오류 처리
+                });
+        }
+        function fetchTickets(stdNo) {
+            fetch(`/tickets`)
+                .then(response => {
+                    console.log('서버 응답 상태 코드:', response.status);
+                    if (!response.ok) {
+                        throw new Error('서버 응답 오류');
+                    }
+                    return response.json();
+                })
+                .then(tickets => {
+                    // 예매 내역을 테이블에 추가
+                    const tableBody = document.getElementById('ticket-table').getElementsByTagName('tbody')[0];
+                    tickets.forEach(ticket => {
+                        const row = tableBody.insertRow();
+                        row.insertCell(0).innerText = ticket.tKNo;
+                        row.insertCell(1).innerText = ticket.formattedDate;
+                        row.insertCell(2).innerText = ticket.formattedTime;
+                        row.insertCell(3).innerText = ticket.busDP + ' - ' + ticket.busAl;
+                        row.insertCell(4).innerText = ticket.seatNo;
+                        row.insertCell(5).innerHTML = '<a href="./modify_action.html" class="button">예매 변경 및 취소</a>';
+                    });
+                })
+                .catch(error => {
+                    console.error('예매 내역 조회 중 오류 발생:', error);
+                    console.log(error)// 오류 처리
+                });
+        }
+
+        // 페이지 로드 시 로그인 상태 확인 요청 보내기
+        document.addEventListener('DOMContentLoaded', checkLoginStatus);
+        fetch('/check-login-status')
+            .then(response => response.json())
+            .then(data => {
+                const authLink = document.getElementById('login-logout');
+                if (data.loggedIn) {
+                    authLink.textContent = '로그아웃';
+                    authLink.href = '#';
+                    authLink.onclick = (event) => {
+                        event.preventDefault();
+                        fetch('/logout', {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === '로그아웃 성공') {
+                                    window.location.href = '/';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('로그아웃 요청 실패:', error);
+                            });
+                    };
+                } else {
+                    authLink.textContent = '로그인';
+                    authLink.href = './login.html';
+                }
+            })
+            .catch(error => {
+                console.error('로그인 상태 확인 요청 실패:', error);
+            });
+    
+    </script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body>
     <div class="main">
         <div class="header">
@@ -16,7 +18,7 @@
                     <li><a href="./timetable.html">노선 조회</a></li>
                     <li><a href="./ticket.html">버스 예매</a></li>
                     <li><a href="./modify.html">예매 내역</a></li>
-                    <li><a href="./login.html">로그인</a></li>
+                    <li><a id="login-logout" href="./login.html"></a></li>
                 </ul>
             </div>
         </div>
@@ -26,5 +28,40 @@
             <button type="button" onclick="location.href=('./ticket.html')">버스 예매하기</button>
         </div>
     </div>
+    <script>
+        let isLoggedIn = false;
+
+        fetch('/check-login-status')
+            .then(response => response.json())
+            .then(data => {
+                const authLink = document.getElementById('login-logout');
+                if (data.loggedIn) {
+                    authLink.textContent = '로그아웃';
+                    authLink.href = '#';
+                    authLink.onclick = (event) => {
+                        event.preventDefault();
+                        fetch('/logout', {
+                            method: 'POST'
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message === '로그아웃 성공') {
+                                    window.location.href = '/';
+                                }
+                            })
+                            .catch(error => {
+                                console.error('로그아웃 요청 실패:', error);
+                            });
+                    };
+                } else {
+                    authLink.textContent = '로그인';
+                    authLink.href = '/login.html';
+                }
+            })
+            .catch(error => {
+                console.error('로그인 상태 확인 요청 실패:', error);
+            });
+    </script>
 </body>
+
 </html>
